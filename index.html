@@ -1,0 +1,109 @@
+<head>
+</head>
+<body>
+
+	<textarea id="input" style="width: 400px; height: 90%; resize: none">chicken 
+chicken chicken
+chicken chicken chicken </textarea>
+	
+	<button onclick=chicken2chickenASM(document.getElementById('input').value) > Count </button>
+
+	<textarea id="output" readonly style="width: 400px; height: 90%; resize: none"></textarea>
+
+	<script>
+		function getOptCode(param) {
+			switch (param) {
+				case 0:
+					return "exit";
+				case 1: 
+					return "chicken";
+				case 2: 
+					return "add";
+				case 3: 
+					return "substract";
+				case 4: 
+					return "multiply";
+				case 5:
+					return "compare";
+				case 6: 
+					return "load";
+				case 7: 
+					return "store";
+				case 8:
+					return "jump";
+				case 9:
+					return "char";
+				default: 
+					return "push "+(parseInt(param)-10);
+			}
+		}
+	
+		function chicken2chickenASM(input) {
+			var output = [];
+			var isNewToken = true;
+			var optCode = "";
+			document.getElementById('output').value = "";
+			
+			var input = input.replace(/[\r\n]/g, ' \r\n'); //handle zero chickens
+			var linesArray = input.split(/[\r\n]+/);
+			
+			console.log(linesArray);
+			
+			console.log("LinesArray: "+linesArray);
+			for (var i=0; i<linesArray.length; ++i) {
+				var chickenCount = (linesArray[i].trim() == "")? 0 : linesArray[i].trim().split(/\s+/).length;
+				console.log("Chickencount = " + chickenCount);
+				
+				switch (chickenCount) {
+				case 0:
+					if (isNewToken)
+						optCode = "exit";
+					else 
+						optCode += " 0";
+					break;
+				case 1: 
+					if (isNewToken)
+						optCode = "chicken";
+					else 
+						optCode += " 1";
+					break;
+				case 2: 
+					optCode = "add";
+					break;
+				case 3: 
+					optCode = "substract";
+					break;
+				case 4: 
+					optCode = "multiply";
+					break;
+				case 5:
+					optCode = "compare";
+					break;
+				case 6: 
+					optCode = "load";
+					break;
+				case 7: 
+					optCode = "store";
+					break;
+				case 8:
+					optCode = "jump";
+					break;
+				case 9:
+					optCode = "char";
+					break;
+				default: 
+					optCode = "push "+(parseInt(chickenCount)-10);
+				}
+				
+				//load instruction is duouble-wide instruction
+				isNewToken = (optCode !== "load");
+				
+				if (isNewToken) {
+					document.getElementById('output').value += (i+1) + ". line chicken count: " + chickenCount + " " + optCode + "\n";
+					
+					output.push(optCode);
+				}
+			}		
+		}
+	</script>
+</body>
