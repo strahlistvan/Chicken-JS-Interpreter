@@ -6,38 +6,14 @@
 chicken chicken
 chicken chicken chicken </textarea>
 	
-	<button onclick=chicken2chickenASM(document.getElementById('input').value) > Count </button>
+	<button onclick=chicken2chickenASM(document.getElementById('input').value) > toChickenASM </button>
+	<button onclick=chicken2Eggsembly(document.getElementById('input').value) > toEggsembly </button>
 
 	<textarea id="output" readonly style="width: 400px; height: 90%; resize: none"></textarea>
 
-	<script>
-		function getOptCode(param) {
-			switch (param) {
-				case 0:
-					return "exit";
-				case 1: 
-					return "chicken";
-				case 2: 
-					return "add";
-				case 3: 
-					return "substract";
-				case 4: 
-					return "multiply";
-				case 5:
-					return "compare";
-				case 6: 
-					return "load";
-				case 7: 
-					return "store";
-				case 8:
-					return "jump";
-				case 9:
-					return "char";
-				default: 
-					return "push "+(parseInt(param)-10);
-			}
-		}
+	<textarea id="output_egg" readonly style="width: 400px; height: 90%; resize: none"></textarea>
 	
+	<script>	
 		function chicken2chickenASM(input) {
 			var output = [];
 			var isNewToken = true;
@@ -95,15 +71,56 @@ chicken chicken chicken </textarea>
 					optCode = "push "+(parseInt(chickenCount)-10);
 				}
 				
-				//load instruction is duouble-wide instruction
+				//load instruction is double-wide instruction
 				isNewToken = (optCode !== "load");
 				
 				if (isNewToken) {
-					document.getElementById('output').value += (i+1) + ". line chicken count: " + chickenCount + " " + optCode + "\n";
-					
+					document.getElementById('output').value += optCode + "\n";
 					output.push(optCode);
 				}
-			}		
+			}
+
+			return output;
+		}
+		
+		function chickenASM2Eggsembly(input) {
+			var output = [];
+			var asmEggsemblyConverter = {	asmEggsemblyMap : { exit: "axe", 
+																substract: "fox", 
+																multiply: "rootster", 
+																load: "pick", 
+																store: "peck", 
+																jump: "fr", 
+																char: "BBQ" },
+																
+											convertAsm2Egg : function(asm) {
+												if (this.asmEggsemblyMap[asm]) {
+													var str = this.asmEggsemblyMap[asm];
+													return str.split(' ')[0]; 
+												}
+												return asm;
+												
+											}											
+										};
+		
+			//handle raw string and line splitted input too
+			var linesArray = (typeof(input) == "string") ? input.split(/[\r\n]+/) : input;
+			
+			for (var i=0; i<linesArray.length; ++i) {
+				output.push(asmEggsemblyConverter.convertAsm2Egg(linesArray[i]));
+				console.log(asmEggsemblyConverter.convertAsm2Egg(linesArray[i]));
+			}
+
+			return output;
+		}
+		
+		function chicken2Eggsembly(input) {
+			var chickenAsmArray = chicken2chickenASM(input);
+			var eggsemblyArray = chickenASM2Eggsembly(chickenAsmArray);
+			
+			for (var i=0; i<eggsemblyArray.length; ++i) {
+				document.getElementById("output_egg").innerHTML += eggsemblyArray[i] + "\n";
+			}
 		}
 	</script>
 </body>
