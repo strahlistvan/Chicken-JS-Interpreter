@@ -41,7 +41,7 @@ function chicken2opcode(input) {
  * Input: Array of Opcodes or Opcode string delimeted by new lines
  * Output: Array of ChickenASM instructions
  */
-function opcode2chickenASM(input) {
+function opcode2chickenasm(input) {
 	var output = [];
 	var isNewToken = true;
 	
@@ -49,8 +49,9 @@ function opcode2chickenASM(input) {
 	var opcodeArray = (typeof(input) == "string") ? input.split(/[\r\n]+/) : input;
 
 	for (var i=0; i<opcodeArray.length; ++i) {
-		 	
-		switch (opcodeArray[i]) {
+		var code = parseInt(opcodeArray[i]);
+		
+		switch (code) {
 		case 0:
 			if (isNewToken)
 				asmLine = "exit";
@@ -88,7 +89,7 @@ function opcode2chickenASM(input) {
 			asmLine = "char";
 			break;
 		default: 
-			asmLine = "push "+(parseInt(opcodeArray[i])-10);
+			asmLine = "push "+(code-10);
 		}
 		
 		//load instruction is double-wide instruction
@@ -102,22 +103,21 @@ function opcode2chickenASM(input) {
 	return output;
 }
 
+/** Compile Opcode array or string to Eggsembly array */
+function opcode2eggsembly(input) {
+	var chickenASM = opcode2chickenasm(input);	
+	var eggsembly = chickenasm2eggsembly(chickenASM);
+	
+	return eggsembly;
+}
+
 /** Compile Chicken source code to ChickenASM code
  * Input: Chicken source code string
  * Output: Array of ChickenASM instructions
  */
-function chicken2chickenASM(input) {
-	document.getElementById('output').value = "";
-	
+function chicken2chickenasm(input) {	
 	var opcode = chicken2opcode(input);
-	var output = opcode2chickenASM(opcode);
-	
-	for (var i=0; i<output.length; ++i) {
-		document.getElementById('output').value += output[i] + '\n';	
-	}
-	
-	console.log("chickenAsm2chicken");
-	console.log(chickenAsm2chicken(output));
+	var output = opcode2chickenasm(opcode);
 	
 	return output;
 }
@@ -126,7 +126,7 @@ function chicken2chickenASM(input) {
  * Input: Array of ChickenASM instructions or ChickenASM source code string
  * Output: Array of Eggsembly instructions
  */
-function chickenAsm2Eggsembly(input) {
+function chickenasm2eggsembly(input) {
 	var output = [];
 
 	//handle raw string and line splitted input too
@@ -144,7 +144,7 @@ function chickenAsm2Eggsembly(input) {
  * Input: Array of Eggsembly instructions or Eggsembly source code string
  * Output: Array of ChickenASM instructions
  */
-function eggsembly2ChickenAsm(input) {
+function eggsembly2chickenasm(input) {
 	var output = [];
 
 	//handle raw string and line splitted input too
@@ -162,17 +162,10 @@ function eggsembly2ChickenAsm(input) {
  * Input: Chicken source code string
  * Output: Array of Eggsembly instructions
  */
-function chicken2Eggsembly(input) {
-	var chickenAsmArray = chicken2chickenASM(input);
-	var eggsemblyArray = chickenAsm2Eggsembly(chickenAsmArray);
-	
-	for (var i=0; i<eggsemblyArray.length; ++i) {
-		document.getElementById("output_egg").innerHTML += eggsemblyArray[i] + "\n";
-	}
-	
-	console.log(" eggsembly2chicken: ");
-	console.log(eggsembly2chicken(eggsemblyArray));
-	
+function chicken2eggsembly(input) {
+	var chickenAsmArray = chicken2chickenasm(input);
+	var eggsemblyArray = chickenasm2eggsembly(chickenAsmArray);
+
 	return eggsemblyArray;
 }
 
@@ -190,7 +183,7 @@ function opcode2chicken(input) {
 	Input: Array of ChickenASM instructions or ChickenASM source code string.
 	Output: Array of Opcodes
 */
-function chickenAsm2opcode(input) {
+function chickenasm2opcode(input) {
 	
 	var output = [];
 	//handle raw string and line splitted input too
@@ -220,7 +213,7 @@ function chickenAsm2opcode(input) {
 
 /** Decompile ChickenASM to Chicken source code */
 function chickenAsm2chicken(input) {	
-	var opcodeArray = chickenAsm2opcode(input);
+	var opcodeArray = chickenasm2opcode(input);
 	var chickenCode = opcode2chicken(opcodeArray);
 	
 	return chickenCode;
@@ -228,8 +221,8 @@ function chickenAsm2chicken(input) {
 
 /** Decompile Eggsembly code to Chicken source code */
 function eggsembly2chicken(input) {
-	var asmArray = eggsembly2ChickenAsm(input);
-	var opcodeArray = chickenAsm2opcode(asmArray);
+	var asmArray = eggsembly2chickenasm(input);
+	var opcodeArray = chickenasm2opcode(asmArray);
 	var chickenCode = opcode2chicken(opcodeArray);
 	
 	return chickenCode;

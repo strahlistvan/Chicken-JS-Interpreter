@@ -1,17 +1,68 @@
 <head>
 </head>
 <body>
-
-	<textarea id="input" style="width: 400px; height: 90%; resize: none">chicken 
-chicken chicken
-chicken chicken chicken </textarea>
+	<div style="width: 40%; float: left">
+		<textarea id="input" style="width: 400px; height: 90%; resize: none">chicken 
+	chicken chicken
+	chicken chicken chicken
+	</textarea>
+	</div>
 	
-	<button onclick=chicken2chickenASM(document.getElementById('input').value) > toChickenASM </button>
-	<button onclick=chicken2Eggsembly(document.getElementById('input').value) > toEggsembly </button>
-
+	<div style="width: 15%; float: left"> 
+		<label for="source_lang"> Source language: </label>
+		<select id="source_lang" name="source_lang" > 
+			<option value="chicken"> Chicken </option>
+			<option value="opcode"> Opcode </option>
+			<option value="chickenasm"> ChickenASM </option>
+			<option value="eggsembly"> Eggsembly </option>
+		</select>
+		<br />
+		<button id="swap_source_dest" name="swap_source_dest">&lt;-&gt;</button>
+		<br />
+		<label for="dest_lang" > Destination language: </label>
+		<select id="dest_lang" name="dest_lang"> 
+			<option value="chicken"> Chicken </option>
+			<option value="opcode"> Opcode </option>
+			<option value="chickenasm"> ChickenASM </option>
+			<option value="eggsembly"> Eggsembly </option>
+		</select>	
+		<br />
+		<button id="start">START</button>
+	</div>
+	
+	<div style="width: 40%; float: left">
 	<textarea id="output" readonly style="width: 400px; height: 90%; resize: none"></textarea>
-
-	<textarea id="output_egg" readonly style="width: 400px; height: 90%; resize: none"></textarea>
+	</div>
 	
 	<script src="chicken_compiler.js" > </script>
+	
+	<script> 
+		window.onload = function() {
+			document.getElementById('start').onclick = function() {
+				
+				var input = document.getElementById("input").value;
+				var source_lang = document.getElementById("source_lang").value;
+				var dest_lang = document.getElementById("dest_lang").value;
+				var output = "";
+								
+				try {
+					output = window[source_lang + "2" + dest_lang](input);
+				}
+				catch (ex) {
+					alert("Invalid parameters: Can not compile from "+source_lang + " to " + dest_lang);
+				}
+				
+ 				//instead of iterate over the array
+				document.getElementById("output").value = output.toString().split(',').join('\n');
+			}
+			
+			document.getElementById('swap_source_dest').onclick = function() {
+				var temp = document.getElementById("source_lang").value;
+				document.getElementById("source_lang").value = document.getElementById("dest_lang").value;
+				document.getElementById("dest_lang").value = temp;
+				
+			}
+		}
+	</script>
+	
 </body>
