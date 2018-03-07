@@ -31,8 +31,7 @@ function chicken2opcode(input) {
 	var linesArray = input.split(/[\r\n]+/);
 	
 	//opcode = chicken keywords  count in a line
-	output = linesArray.map(str => (str.trim() == "")? 0 : str.trim()
-	.split(/\s+/).length);
+	output = linesArray.map( str => (str.trim() == "")? 0 : str.trim().split(/\s+/).length );
 	
 	return output;
 }
@@ -203,7 +202,7 @@ function chickenasm2opcode(input) {
 			}
 		}
 		else { //push
-			var pushParam = line.split(' ')[1];
+			var pushParam = parseInt(line.split(' ')[1]);
 			output.push(pushParam+10);
 		}
 	}
@@ -212,7 +211,7 @@ function chickenasm2opcode(input) {
 }
 
 /** Decompile ChickenASM to Chicken source code */
-function chickenAsm2chicken(input) {	
+function chickenasm2chicken(input) {	
 	var opcodeArray = chickenasm2opcode(input);
 	var chickenCode = opcode2chicken(opcodeArray);
 	

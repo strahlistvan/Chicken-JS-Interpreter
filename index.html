@@ -35,22 +35,31 @@
 	</div>
 	
 	<script src="chicken_compiler.js" > </script>
+	<script src="chicken_vm.js" > </script>
 	
 	<script> 
 		window.onload = function() {
 			document.getElementById('start').onclick = function() {
 				
 				var input = document.getElementById("input").value;
-				var source_lang = document.getElementById("source_lang").value;
-				var dest_lang = document.getElementById("dest_lang").value;
+				var sourceLang = document.getElementById("source_lang").value;
+				var destLang = document.getElementById("dest_lang").value;
 				var output = "";
 								
 				try {
-					output = window[source_lang + "2" + dest_lang](input);
+					var functionName = sourceLang + "2" + destLang;
+					output = window[functionName](input);
 				}
 				catch (ex) {
-					alert("Invalid parameters: Can not compile from "+source_lang + " to " + dest_lang);
+					alert("Invalid parameters: Can not compile from " + sourceLang + " to " + destLang);
+					console.log(ex);
 				}
+				
+				//TODO: test chickenVM
+//				if (sourceLang === "chickenasm") {
+//					ChickenVM.readChickenAsmCode(input);
+//					ChickenVM.parseChickenAsm();
+//				}
 				
  				//instead of iterate over the array
 				document.getElementById("output").value = output.toString().split(',').join('\n');
@@ -60,7 +69,6 @@
 				var temp = document.getElementById("source_lang").value;
 				document.getElementById("source_lang").value = document.getElementById("dest_lang").value;
 				document.getElementById("dest_lang").value = temp;
-				
 			}
 		}
 	</script>
