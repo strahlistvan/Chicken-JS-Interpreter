@@ -47,48 +47,19 @@ function opcode2chickenasm(input) {
 	//handle raw string and line splitted input too
 	var opcodeArray = (typeof(input) == "string") ? input.split(/[\r\n]+/) : input;
 
+	var instrucionArray = ["exit", "chicken", "add", "substract", "multiply", "compare", "load", "store", "jump", "char"];
+	
 	for (var i=0; i<opcodeArray.length; ++i) {
 		var code = parseInt(opcodeArray[i]);
 		
-		switch (code) {
-		case 0:
-			if (isNewToken)
-				asmLine = "exit";
-			else 
-				asmLine += " 0";
-			break;
-		case 1: 
-			if (isNewToken)
-				asmLine = "chicken";
-			else 
-				asmLine += " 1";
-			break;
-		case 2: 
-			asmLine = "add";
-			break;
-		case 3: 
-			asmLine = "substract";
-			break;
-		case 4: 
-			asmLine = "multiply";
-			break;
-		case 5:
-			asmLine = "compare";
-			break;
-		case 6: 
-			asmLine = "load";
-			break;
-		case 7: 
-			asmLine = "store";
-			break;
-		case 8:
-			asmLine = "jump";
-			break;
-		case 9:
-			asmLine = "char";
-			break;
-		default: 
-			asmLine = "push "+(code-10);
+		if (!isNewToken && (code === 0 || code === 1)) {
+			asmLine += " " + code;
+		}
+		else if (code >= 10) {
+			asmLine = "push " + (code-10);
+		}
+		else {
+			asmLine = instrucionArray[code];
 		}
 		
 		//load instruction is double-wide instruction
