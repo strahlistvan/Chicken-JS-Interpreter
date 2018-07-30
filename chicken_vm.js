@@ -17,12 +17,18 @@ var ChickenVM = {
 	readChickenAsmCode: function(input) {
 		//handle raw string and line splitted input too
 		this.code = (typeof(input) == "string") ? input.split(/[\r\n]+/) : input;
+			
+		for (var i=0; i<this.code.length; ++i) {
+			chickenasm2opcode(this.code[i]);
+		}
 	},
 	
 	parseChickenAsm: function() {
 		
 		for (var i=0; i<this.code.length; ++i) {
-			var instr = this.code[i].split(' ')[0];
+			var asmLine = opcode2chickenasm(this.code[i])[0];
+			console.log("asmLine type " + typeof asmLine);
+			var instr = asmLine.split(' ')[0];
 			
 			switch (instr) {
 				case "push":
@@ -43,11 +49,37 @@ var ChickenVM = {
 					var top = this.stackPop();
 					var prev = this.stack[this.stackPointer];
 					this.stackPush(top * prev);
-					break;				
+					break;
+				case "compare":
+					var top = this.stackPop();
+					var prev = this.stack[this.stackPointer];
+					this.stackPush(parseInt(top === prev));
+					break;
+				case "load":
+					var arg = asmLine.split(' ')[1];
+					if (arg == 0) {
+						userInput= this.stackPop();
+					}
+					else if (arg == 1) {
+						userInput = prompt('Read element: ');
+					}
+					break;
+				case 'store':
+					var storeTo = this.stackPop();
+					var condition = this.stackPop();
+					if (condition && storeTo < this.stackPointer) {
+						this.stackPointer = storeTo;
+					}
+					break;
+				case 'char': 
+					String.fromCharCode(this.stackPop());
+					break;
+				default: 
+					this.stackPush(this.code-10);
 			}
 
 		}
 		
-		console.log(this.stack);	
+		console.log(this.stack.toString());	
 	},
 }

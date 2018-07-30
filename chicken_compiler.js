@@ -1,29 +1,30 @@
 /** ChickenASM <-> Eggsembly dictionary object. */
-var asmEggsemblyConverter = {	asmEggsemblyMap : { exit: "axe", 
-													substract: "fox", 
-													multiply: "rootster", 
-													load: "pick", 
-													store: "peck", 
-													jump: "fr", 
-													char: "BBQ" },
-													
-								convertAsm2Egg : function(asm) {
-									if (this.asmEggsemblyMap[asm]) {
-										var str = this.asmEggsemblyMap[asm];
-										return str.split(' ')[0];  // only instructions, without arguments
-									}
-									return asm;	
-								},
+var asmEggsemblyConverter = {	
+	asmEggsemblyMap : { exit: "axe", 
+						substract: "fox", 
+						multiply: "rootster", 
+						load: "pick", 
+						store: "peck", 
+						jump: "fr", 
+						char: "BBQ" },
+						
+	convertAsm2Egg : function(asm) {
+		if (this.asmEggsemblyMap[asm]) {
+			var str = this.asmEggsemblyMap[asm];
+			return str.split(' ')[0];  // only instructions, without arguments
+		}
+		return asm;	
+	},
 
-								convertEggsm2Asm : function(eggsm) {
-									for (var prop in this.asmEggsemblyMap) {
-										if (this.asmEggsemblyMap[prop] == eggsm) {
-											return prop;
-										}
-									}
-									return eggsm; // if not found in dictionary
-								}
-							};
+	convertEggsm2Asm : function(eggsm) {
+		for (var prop in this.asmEggsemblyMap) {
+			if (this.asmEggsemblyMap[prop] == eggsm) {
+				return prop;
+			}
+		}
+		return eggsm; // if not found in dictionary
+	}
+};
 
 /** Compile chicken source code into Opcode. Return Array of Opcodes. */
 function chicken2opcode(input) {
@@ -142,8 +143,22 @@ function chicken2eggsembly(input) {
 /** Decompile opcode array to chicken source string */
 function opcode2chicken(input) {
 	var output = "";
+	
+	//handle raw string and line splitted input too
+	var linesArray = (typeof(input) == "string") ? input.split(/[\r\n]+/) : input;
+	
 	for (var i=0; i<input.length; ++i) {
-		var output = output + Array(input[i]+1).join(" chicken") + "\n";
+		
+		if (input[i] == 0) //do not print anything to opcode=0
+			continue;
+		
+		var line = "";
+		for (var j=0; j<input[i]; ++j) {
+			console.log(j);
+			line = line + "chicken ";
+		}
+		//var output = output + Array(input[i]+1).join(" chicken") + "\n";
+		var output = output + line + "\n";
 	}
 	
 	return output;
@@ -162,6 +177,10 @@ function chickenasm2opcode(input) {
 	var instructions = ["exit", "chicken", "add", "substract", "multiply", "compare", "load", "store", "jump", "char"];
 	
 	for (var i=0; i<linesArray.length; ++i) {
+		
+		if (linesArray[i].trim() === "") //do not compile empty lines
+			continue;
+		
 		var line = linesArray[i];
 
 		var instr = line.split(' ')[0]; 

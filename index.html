@@ -1,14 +1,17 @@
+<!DOCTYPE html>
 <head>
+	<meta charset="utf-8">
+	<title>Chicken compiler</title>
 </head>
 <body>
-	<div style="width: 40%; float: left">
+	<div style="width: 40%; height: 800px; float: left">
 		<textarea id="input" style="width: 400px; height: 90%; resize: none">chicken 
 	chicken chicken
 	chicken chicken chicken
 	</textarea>
 	</div>
 	
-	<div style="width: 15%; float: left"> 
+	<div style="width: 15%; height: 800px; float: left"> 
 		<label for="source_lang"> Source language: </label>
 		<select id="source_lang" name="source_lang" > 
 			<option value="chicken"> Chicken </option>
@@ -30,7 +33,7 @@
 		<button id="start">START</button>
 	</div>
 	
-	<div style="width: 40%; float: left">
+	<div style="width: 40%; height: 800px; float: left">
 	<textarea id="output" readonly style="width: 400px; height: 90%; resize: none"></textarea>
 	</div>
 	
@@ -48,6 +51,7 @@
 								
 				try {
 					var functionName = sourceLang + "2" + destLang;
+					console.log(functionName);
 					output = window[functionName](input);
 				}
 				catch (ex) {
